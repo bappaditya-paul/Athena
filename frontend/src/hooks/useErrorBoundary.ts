@@ -1,6 +1,17 @@
 import {useState, useCallback, useRef, useEffect} from 'react';
 import {ErrorUtils} from 'react-native';
 
+declare global {
+  interface PromiseRejectionEvent extends Event {
+    reason: any;
+    promise: Promise<any>;
+  }
+  
+  interface Window {
+    onunhandledrejection?: (event: PromiseRejectionEvent) => void;
+  }
+}
+
 type ErrorHandler = (error: Error, stackTrace: string) => void;
 type ErrorBoundaryState = {
   hasError: boolean;
@@ -36,14 +47,11 @@ const useErrorBoundary = (onError?: ErrorHandler) => {
     ErrorUtils.setGlobalHandler(errorHandlerWrapper);
 
     // Set up unhandled promise rejection handler
-    const originalPromiseRejectionHandler = global.PromiseRejectionHandler;
-    
-    global.PromiseRejectionHandler = (id: string, error: Error) => {
-      errorHandlerWrapper(error, false);
-      if (originalPromiseRejectionHandler) {
-        originalPromiseRejectionHandler(id, error);
-      }
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      errorHandlerWrapper(event.reason, false);
     };
+    
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
 
     // Set up custom error handler if provided
     if (onError) {
@@ -53,7 +61,7 @@ const useErrorBoundary = (onError?: ErrorHandler) => {
     // Cleanup
     return () => {
       ErrorUtils.setGlobalHandler(originalHandler);
-      global.PromiseRejectionHandler = originalPromiseRejectionHandler;
+      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
     };
   }, [onError]);
 

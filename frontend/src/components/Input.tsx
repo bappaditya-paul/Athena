@@ -1,9 +1,15 @@
 import React from 'react';
-import {StyleSheet, StyleProp, ViewStyle, TextInput as RNTextInput} from 'react-native';
-import {TextInput as PaperInput, useTheme, TextInputProps} from 'react-native-paper';
-import {Theme} from '../theme';
+import { StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { 
+  TextInput as PaperInput, 
+  useTheme, 
+  TextInputProps as PaperTextInputProps,
+  HelperText, 
+  MD3Theme,
+  TextInputIconProps
+} from 'react-native-paper';
 
-type InputProps = TextInputProps & {
+type InputProps = Omit<PaperTextInputProps, 'theme'> & {
   label: string;
   value: string;
   onChangeText: (text: string) => void;
@@ -27,7 +33,7 @@ const Input: React.FC<InputProps> = ({
   onRightIconPress,
   ...props
 }) => {
-  const theme = useTheme<Theme>();
+  const theme = useTheme<MD3Theme>();
   
   return (
     <>
@@ -46,24 +52,30 @@ const Input: React.FC<InputProps> = ({
             background: theme.colors.surface,
           },
         }}
-        left={leftIcon ? <PaperInput.Icon name={leftIcon} color={theme.colors.placeholder} /> : undefined}
+left={leftIcon ? (() => {
+          const iconProps: TextInputIconProps = {
+            icon: leftIcon,
+            color: error ? theme.colors.error : theme.colors.onSurfaceVariant,
+            forceTextInputFocus: false
+          };
+          return <PaperInput.Icon {...iconProps} />;
+        })() : undefined}
         right={
-          rightIcon ? (
-            <PaperInput.Icon
-              name={rightIcon}
-              onPress={onRightIconPress}
-              color={error ? theme.colors.error : theme.colors.placeholder}
-              forceTextInputFocus={false}
-            />
-          ) : undefined
+          rightIcon ? (() => {
+            const iconProps: TextInputIconProps = {
+              icon: rightIcon,
+              onPress: onRightIconPress,
+              color: error ? theme.colors.error : theme.colors.onSurfaceVariant,
+              forceTextInputFocus: false
+            };
+            return <PaperInput.Icon {...iconProps} />;
+          })() : undefined
         }
         {...props}
       />
-      {error && errorText && (
-        <PaperInput.HelperText type="error" visible={error}>
-          {errorText}
-        </PaperInput.HelperText>
-      )}
+      <HelperText type="error" visible={error}>
+        {errorText}
+      </HelperText>
     </>
   );
 };

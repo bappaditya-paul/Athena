@@ -1,4 +1,4 @@
-import {useEffect, useRef} from 'react';
+import {useState, useEffect, useRef} from 'react';
 import {AppState, AppStateStatus} from 'react-native';
 
 type Callback = (appState: AppStateStatus) => void;
@@ -11,8 +11,8 @@ type UseAppStateReturn = {
 };
 
 const useAppState = (onChange?: Callback): UseAppStateReturn => {
-  const appState = useRef<AppStateStatus>(AppState.currentState);
-  const [currentAppState, setCurrentAppState] = useState<AppStateStatus>(appState.current);
+  const [currentAppState, setCurrentAppState] = useState<AppStateStatus>(AppState.currentState);
+  const appState = useRef<AppStateStatus>(currentAppState);
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
@@ -27,6 +27,9 @@ const useAppState = (onChange?: Callback): UseAppStateReturn => {
     };
 
     const subscription = AppState.addEventListener('change', handleAppStateChange);
+    
+    // Initial check
+    handleAppStateChange(AppState.currentState);
 
     return () => {
       subscription.remove();

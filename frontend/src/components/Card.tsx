@@ -1,7 +1,8 @@
 import React from 'react';
 import {StyleSheet, StyleProp, ViewStyle, View, TouchableOpacity} from 'react-native';
 import {Card as PaperCard, Title, Paragraph, useTheme} from 'react-native-paper';
-import {Theme} from '../theme';
+import { MD3Theme } from 'react-native-paper';
+import { AppTheme } from '../theme';
 
 type CardProps = {
   title?: string;
@@ -34,7 +35,7 @@ const Card: React.FC<CardProps> = ({
   borderRadius = 8,
   padding = 16,
 }) => {
-  const theme = useTheme<Theme>();
+  const theme = useTheme<MD3Theme>();
   
   const renderContent = () => (
     <View style={[styles.content, contentStyle, {padding}]}>

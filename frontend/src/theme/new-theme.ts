@@ -1,7 +1,7 @@
 import { MD3LightTheme, MD3DarkTheme, configureFonts } from 'react-native-paper';
 import { Platform } from 'react-native';
 
-// Define color scheme type
+// Define the color scheme type
 type ColorScheme = {
   primary: string;
   secondary: string;

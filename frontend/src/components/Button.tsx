@@ -1,103 +1,151 @@
 import React from 'react';
-import {StyleSheet, StyleProp, ViewStyle, TouchableOpacity} from 'react-native';
-import {Button as PaperButton, Text, useTheme} from 'react-native-paper';
-import {Theme} from '../theme';
+import { TouchableOpacity, StyleSheet, ActivityIndicator, ViewStyle, TextStyle, StyleProp } from 'react-native';
+import { Text, useTheme, IconButton } from 'react-native-paper';
+import { AppTheme } from '../theme';
 
-type ButtonProps = React.ComponentProps<typeof PaperButton> & {
-  mode?: 'text' | 'outlined' | 'contained';
-  style?: StyleProp<ViewStyle>;
-  labelStyle?: any;
-  children: React.ReactNode;
+type ButtonVariant = 'primary' | 'secondary' | 'outlined' | 'text';
+
+interface ButtonProps {
+  title: string;
+  onPress: () => void;
+  variant?: ButtonVariant;
   loading?: boolean;
   disabled?: boolean;
+  style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
   icon?: string;
-  onPress: () => void;
-};
+  fullWidth?: boolean;
+  testID?: string;
+}
 
 const Button: React.FC<ButtonProps> = ({
-  mode = 'contained',
-  style,
-  labelStyle,
-  children,
+  title,
+  onPress,
+  variant = 'primary',
   loading = false,
   disabled = false,
+  style,
+  textStyle,
   icon,
-  onPress,
-  ...props
+  fullWidth = false,
+  testID,
 }) => {
-  const theme = useTheme<Theme>();
+  const theme = useTheme() as AppTheme;
+  
+  const getButtonStyle = (): StyleProp<ViewStyle> => {
+    const baseStyle: ViewStyle = {
+      borderRadius: theme.roundness,
+      paddingVertical: 12,
+      paddingHorizontal: 24,
+      minWidth: 120,
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexDirection: 'row',
+      width: fullWidth ? '100%' : undefined,
+    };
 
-  const buttonStyles = [
-    styles.button,
-    mode === 'contained' && styles.contained,
-    mode === 'outlined' && styles.outlined,
-    disabled && styles.disabled,
-    style,
-  ];
+    const variantStyles: Record<ButtonVariant, ViewStyle> = {
+      primary: {
+        backgroundColor: theme.colors.primary,
+      },
+      secondary: {
+        backgroundColor: theme.colors.secondary,
+      },
+      outlined: {
+        backgroundColor: 'transparent',
+        borderWidth: 1,
+        borderColor: theme.colors.primary,
+      },
+      text: {
+        backgroundColor: 'transparent',
+        paddingHorizontal: 12,
+      },
+    };
 
-  const textStyles = [
-    styles.text,
-    mode === 'contained' && styles.containedText,
-    mode === 'outlined' && styles.outlinedText,
-    disabled && styles.disabledText,
-    labelStyle,
-  ];
+    const disabledStyle: ViewStyle = {
+      opacity: 0.6,
+    };
+
+    return [
+      baseStyle,
+      variantStyles[variant],
+      disabled && disabledStyle,
+      style,
+    ];
+  };
+
+  const getTextStyle = (): StyleProp<TextStyle> => {
+    const baseStyle: TextStyle = {
+      fontSize: 16,
+      fontWeight: '600',
+    };
+
+    const variantStyles: Record<ButtonVariant, TextStyle> = {
+      primary: {
+        color: theme.colors.surface,
+      },
+      secondary: {
+        color: theme.colors.surface,
+      },
+      outlined: {
+        color: theme.colors.primary,
+      },
+      text: {
+        color: theme.colors.primary,
+      },
+    };
+
+    return [baseStyle, variantStyles[variant], textStyle];
+  };
+
+  const getIconColor = () => {
+    if (variant === 'primary' || variant === 'secondary') {
+      return theme.colors.surface;
+    }
+    return theme.colors.primary;
+  };
 
   return (
     <TouchableOpacity
-      style={buttonStyles}
+      testID={testID}
+      style={getButtonStyle()}
       onPress={onPress}
       disabled={disabled || loading}
-      activeOpacity={0.7}>
+      activeOpacity={0.8}
+    >
       {loading ? (
-        <Text style={textStyles}>Loading...</Text>
+        <ActivityIndicator
+          color={getIconColor()}
+          size="small"
+          style={styles.loader}
+        />
       ) : (
-        <Text style={textStyles}>
-          {icon && <Text style={styles.icon}>{icon} </Text>}
-          {children}
-        </Text>
+        <>
+          {icon && (
+            <IconButton
+              icon={icon}
+              size={20}
+              iconColor={getIconColor()}
+              style={styles.icon}
+              disabled={true}
+            />
+          )}
+          <Text style={getTextStyle()}>
+            {title}
+          </Text>
+        </>
       )}
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
-  button: {
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-    minWidth: 120,
-  },
-  contained: {
-    backgroundColor: '#3498db',
-  },
-  outlined: {
-    borderWidth: 1,
-    borderColor: '#3498db',
-    backgroundColor: 'transparent',
-  },
-  text: {
-    fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  containedText: {
-    color: '#fff',
-  },
-  outlinedText: {
-    color: '#3498db',
-  },
-  disabled: {
-    opacity: 0.6,
-  },
-  disabledText: {
-    opacity: 0.6,
+  loader: {
+    marginRight: 8,
   },
   icon: {
     marginRight: 8,
+    marginLeft: -4,
   },
 });
 

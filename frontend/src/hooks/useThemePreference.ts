@@ -1,7 +1,7 @@
 import {useState, useEffect, useCallback} from 'react';
-import {useColorScheme, ColorSchemeName} from 'react-native';
+import {useColorScheme} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Theme, darkTheme} from '../theme';
+import { lightTheme, darkTheme, AppTheme } from '../theme';
 
 const THEME_PREFERENCE_KEY = '@Athena:themePreference';
 
@@ -41,11 +41,11 @@ const useThemePreference = () => {
   }, []);
 
   // Determine the actual theme to use based on preference and system settings
-  const getTheme = useCallback((): Theme['colors'] => {
+  const getTheme = useCallback((): AppTheme => {
     if (themePreference === 'system') {
-      return systemColorScheme === 'dark' ? darkTheme.colors : theme.colors;
+      return systemColorScheme === 'dark' ? darkTheme : lightTheme;
     }
-    return themePreference === 'dark' ? darkTheme.colors : theme.colors;
+    return themePreference === 'dark' ? darkTheme : lightTheme;
   }, [themePreference, systemColorScheme]);
 
   return {
@@ -53,8 +53,8 @@ const useThemePreference = () => {
     themePreference,
     setThemePreference: saveThemePreference,
     isLoading,
-    isDark: getTheme() === darkTheme.colors,
-  };
+  } as const;
+
 };
 
 export default useThemePreference;

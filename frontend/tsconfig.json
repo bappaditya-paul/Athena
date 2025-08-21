@@ -1,8 +1,11 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "module": "commonjs",
-    "lib": ["es2017"],
+    "module": "esnext",
+    "lib": [
+      "esnext",
+      "dom"
+    ],
     "allowJs": true,
     "jsx": "react-native",
     "noEmit": true,
@@ -14,14 +17,54 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "@components/*": ["src/components/*"],
-      "@screens/*": ["src/screens/*"],
-      "@navigation/*": ["src/navigation/*"],
-      "@services/*": ["src/services/*"],
-      "@utils/*": ["src/utils/*"],
-      "@assets/*": ["src/assets/*"],
-      "@types/*": ["src/types/*"]
-    }
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@screens/*": [
+        "src/screens/*"
+      ],
+      "@navigation/*": [
+        "src/navigation/*"
+      ],
+      "@services/*": [
+        "src/services/*"
+      ],
+      "@utils/*": [
+        "src/utils/*"
+      ],
+      "@assets/*": [
+        "src/assets/*"
+      ],
+      "@types/*": [
+        "src/types/*"
+      ],
+      "@hooks/*": [
+        "src/hooks/*"
+      ],
+      "@contexts/*": [
+        "src/contexts/*"
+      ],
+      "react": [
+        "./node_modules/@types/react"
+      ],
+      "react-native": [
+        "./node_modules/@types/react-native"
+      ],
+      "expo-local-authentication": [
+        "./node_modules/expo-local-authentication/build"
+      ],
+      "react-native-keychain": [
+        "./node_modules/react-native-keychain"
+      ],
+      "react-native-paper": [
+        "./node_modules/react-native-paper/src/index"
+      ]
+    },
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types",
+      "./node_modules/expo/AppEntry"
+    ]
   },
   "exclude": [
     "node_modules",
@@ -29,5 +72,5 @@
     "metro.config.js",
     "jest.config.js"
   ],
-  "extends": "@react-native-community/tsconfig"
+  "extends": "expo/tsconfig.base"
 }

@@ -1,62 +1,60 @@
-import React, {createContext, useContext, useState, useEffect} from 'react';
-import {useColorScheme} from 'react-native';
-import {DefaultTheme, DarkTheme as PaperDarkTheme} from 'react-native-paper';
-import {theme, darkTheme} from '../theme';
+import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
+import { useColorScheme, ColorSchemeName } from 'react-native';
+import { MD3LightTheme, MD3DarkTheme } from 'react-native-paper';
+import { Theme as NavigationTheme } from '@react-navigation/native';
+import { lightTheme, darkTheme, AppTheme } from '../theme';
 
-type ThemeType = 'light' | 'dark';
+type ThemeMode = 'light' | 'dark' | 'system';
 
 type ThemeContextType = {
-  theme: typeof theme;
-  isDark: boolean;
+  theme: AppTheme & { dark: boolean } & NavigationTheme;
+  themeMode: ThemeMode;
+  setThemeMode: (mode: ThemeMode) => void;
   toggleTheme: () => void;
-  setTheme: (theme: ThemeType) => void;
+  isDark: boolean;
 };
 
-const ThemeContext = createContext<ThemeContextType>({
-  theme,
-  isDark: false,
-  toggleTheme: () => {},
-  setTheme: () => {},
-});
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export const useTheme = () => useContext(ThemeContext);
-
-export const ThemeProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
+export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const systemColorScheme = useColorScheme();
-  const [isDark, setIsDark] = useState(systemColorScheme === 'dark');
+  const [themeMode, setThemeMode] = useState<ThemeMode>('system');
 
-  useEffect(() => {
-    setIsDark(systemColorScheme === 'dark');
-  }, [systemColorScheme]);
+  const isDark = themeMode === 'system' 
+    ? systemColorScheme === 'dark' 
+    : themeMode === 'dark';
+
+  const theme = useMemo(() => ({
+    ...(isDark ? darkTheme : lightTheme),
+    dark: isDark,
+  }), [isDark]);
 
   const toggleTheme = () => {
-    setIsDark(!isDark);
+    setThemeMode(prevMode => {
+      if (prevMode === 'system') return 'dark';
+      if (prevMode === 'dark') return 'light';
+      return 'system';
+    });
   };
-
-  const setTheme = (themeType: ThemeType) => {
-    setIsDark(themeType === 'dark');
-  };
-
-  const currentTheme = isDark
-    ? {
-        ...theme,
-        ...PaperDarkTheme,
-        colors: {
-          ...theme.colors,
-          ...darkTheme.colors,
-        },
-      }
-    : theme;
 
   return (
     <ThemeContext.Provider
       value={{
-        theme: currentTheme,
-        isDark,
+        theme,
+        themeMode,
+        setThemeMode,
         toggleTheme,
-        setTheme,
+        isDark,
       }}>
       {children}
     </ThemeContext.Provider>
   );
+};
+
+export const useTheme = () => {
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
 };
