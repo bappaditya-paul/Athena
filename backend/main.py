@@ -1,6 +1,8 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from src.api.misinformation import router as misinformation_router
+from src.api.education import router as education_router
 
 app = FastAPI(title="Athena API", version="1.0.0")
 
@@ -14,10 +16,8 @@ app.add_middleware(
 )
 
 # Include routers
-# from .api.misinformation import router as misinformation_router
-# from .api.education import router as education_router
-# app.include_router(misinformation_router, prefix="/api/misinformation", tags=["misinformation"])
-# app.include_router(education_router, prefix="/api/education", tags=["education"])
+app.include_router(misinformation_router, prefix="/api/misinformation", tags=["misinformation"])
+app.include_router(education_router, prefix="/api/education", tags=["education"])
 
 @app.get("/")
 async def root():
