@@ -1,0 +1,6 @@
+id,title,text,subject,date,label
+1,Sample Fake News Title 1,This is a sample fake news article content.,politics,2023-01-15,FAKE
+2,Real News Article,This is a sample real news article content.,technology,2023-01-16,REAL
+3,Another Fake Story,This is another example of fake content.,health,2023-01-17,FAKE
+4,Verified News Report,This is a verified news report.,business,2023-01-18,REAL
+5,False Claim Alert,This article contains false claims.,science,2023-01-19,FAKE

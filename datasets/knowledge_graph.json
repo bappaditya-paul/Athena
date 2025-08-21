@@ -1,0 +1,44 @@
+{
+  "nodes": [
+    {
+      "id": "p1",
+      "type": "person",
+      "name": "John Doe",
+      "title": "Researcher",
+      "affiliation": "Stanford University"
+    },
+    {
+      "id": "o1",
+      "type": "organization",
+      "name": "Stanford University",
+      "founded": 1885,
+      "location": "Stanford, CA"
+    },
+    {
+      "id": "c1",
+      "type": "concept",
+      "name": "Artificial Intelligence",
+      "description": "Field of computer science focused on creating intelligent machines."
+    }
+  ],
+  "edges": [
+    {
+      "source": "p1",
+      "target": "o1",
+      "relation": "works_at",
+      "since": 2020
+    },
+    {
+      "source": "p1",
+      "target": "c1",
+      "relation": "researches",
+      "since": 2018
+    },
+    {
+      "source": "o1",
+      "target": "c1",
+      "relation": "has_research_focus",
+      "strength": 0.9
+    }
+  ]
+}
