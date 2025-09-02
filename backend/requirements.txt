@@ -9,3 +9,24 @@ firebase-admin==6.2.0
 google-cloud-storage==2.13.0
 pytest==7.4.2
 httpx==0.25.0
+
+# Database
+sqlalchemy==2.0.23
+alembic==1.12.1
+
+# Web scraping and processing
+beautifulsoup4==4.12.2
+newspaper3k==0.2.8
+
+# Audio/Video processing
+SpeechRecognition==3.10.0
+pydub==0.25.1
+
+# NLP
+nltk==3.8.1
+spacy==3.7.2
+https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1.tar.gz
+
+# Utilities
+tqdm==4.66.1
+python-dateutil==2.8.2
